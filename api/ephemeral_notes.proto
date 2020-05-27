@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+option go_package = ".;api";
+option java_multiple_files = true;
+option java_package = "me.agonper.multi-client-grpc.api";
+option java_outer_classname = "EphemeralNotesAPI";
+
+package api;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+// Interface exported by the server
+service EphemeralNotes {
+    // Publishes a note to the server
+    rpc PublishNote(Note) returns (Note);
+
+    // Retrieves notes with realtime updates
+    rpc StreamNotes(google.protobuf.Empty) returns (stream StreamNotesResponse);
+}
+
+// System-wide note declaration
+message Note {
+    string message = 1;
+    google.protobuf.Timestamp created_at = 2;
+    google.protobuf.Timestamp published_at = 3;
+}
+
+// Response message to StreamNotes call
+message StreamNotesResponse {
+    repeated Note notes = 1;
+}

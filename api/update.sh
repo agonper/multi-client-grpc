@@ -1,0 +1,1 @@
+protoc --go_out=plugins=grpc:. ephemeral_notes.proto
