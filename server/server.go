@@ -40,6 +40,7 @@ func (s *ephemeralNotesServer) PublishNote(ctx context.Context, note *api.Note) 
 	return note, nil
 }
 func (s *ephemeralNotesServer) StreamNotes(_ *empty.Empty, stream api.EphemeralNotes_StreamNotesServer) error {
+	log.Print("Stream request started")
 	notes := s.readOnlyNotes()
 	if err := stream.Send(&api.StreamNotesResponse{Notes: notes}); err != nil {
 		log.Printf("stream error: %v", err)

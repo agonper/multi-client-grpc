@@ -40,6 +40,7 @@ func listenAndPrintNotes(client api.EphemeralNotesClient) {
 	if err != nil {
 		log.Fatalf("Failed to open notes stream: %v", err)
 	}
+	log.Print("Stream opened")
 	for {
 		update, err := stream.Recv()
 		if err == io.EOF {
