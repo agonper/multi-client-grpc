@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -45,15 +44,18 @@ func (s *ephemeralNotesServer) StreamNotes(_ *empty.Empty, stream api.EphemeralN
 		return err
 	}
 	for {
-		<-s.news
+		select {
+		case <-stream.Context().Done():
+			log.Print("Stream closed by client")
+			return nil
+		case <-s.news:
+		}
 		notes = s.readOnlyNotes()
 		if err := stream.Send(&api.StreamNotesResponse{Notes: notes}); err != nil {
 			log.Printf("stream error: %v", err)
 			return err
 		}
 	}
-	log.Print("News channel was closed")
-	return errors.New("broken news channel")
 }
 
 func (s *ephemeralNotesServer) readOnlyNotes() []*api.Note {
