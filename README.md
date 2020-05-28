@@ -1,3 +1,3 @@
-# Multi Client gRPC
+# Multi-client gRPC
 
 WIP

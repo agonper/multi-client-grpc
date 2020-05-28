@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
+	"strconv"
 	"sync"
 
 	"github.com/agonper/multi-client-grpc/api"
@@ -72,13 +74,30 @@ func newServer() *ephemeralNotesServer {
 	return s
 }
 
+func serverPort() int {
+	switch os.Getenv("PORT") {
+	case "":
+		return *port
+	default:
+		envPort, err := strconv.Atoi(os.Getenv("PORT"))
+		if err != nil {
+			log.Fatalf("env variable PORT does not contain a number: %v", err)
+		}
+		return envPort
+	}
+}
+
 func main() {
 	flag.Parse()
-	lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", *port))
+	address := fmt.Sprintf(":%d", serverPort())
+
+	lis, err := net.Listen("tcp", address)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	grpcServer := grpc.NewServer()
 	api.RegisterEphemeralNotesServer(grpcServer, newServer())
+	log.Printf("Server will start listening requests at address: %v", address)
+
 	grpcServer.Serve(lis)
 }

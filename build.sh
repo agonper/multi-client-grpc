@@ -1,0 +1,1 @@
+docker build -t agonper/multi-client-grpc-server:latest -f server/Dockerfile .
