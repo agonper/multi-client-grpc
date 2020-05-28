@@ -1,0 +1,17 @@
+# The configuration schema is defined by the service.proto file.
+# https://github.com/googleapis/googleapis/blob/master/google/api/service.proto
+
+type: google.api.Service
+config_version: 3
+name: api-gateway-3t5ec74iwa-ew.a.run.app
+title: Multi-client gRPC
+apis:
+  - name: api.EphemeralNotes
+usage:
+  rules:
+    - selector: "api.EphemeralNotes.*"
+      allow_unregistered_calls: true
+backend:
+  rules:
+    - selector: "api.EphemeralNotes.*"
+      address: grpcs://ephemeral-notes-server-3t5ec74iwa-ew.a.run.app

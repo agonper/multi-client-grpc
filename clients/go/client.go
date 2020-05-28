@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
 	"flag"
+	"fmt"
 	"io"
 	"log"
 	"time"
@@ -10,12 +12,14 @@ import (
 	"github.com/agonper/multi-client-grpc/api"
 	"github.com/golang/protobuf/ptypes"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	pb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 var (
 	noteMessage = flag.String("note_message", "", "The content of the note to be published by the client")
-	serverAddr  = flag.String("server_addr", "localhost:10000", "The server address in the format of host:port")
+	host        = flag.String("host", "localhost", "The server hostname")
+	port        = flag.Int("port", 10000, "The server port")
 )
 
 func publishNote(client api.EphemeralNotesClient, note *api.Note) error {
@@ -61,9 +65,14 @@ func createNote(message string) *api.Note {
 func main() {
 	flag.Parse()
 	var opts []grpc.DialOption
-	opts = append(opts, grpc.WithInsecure())
+	if *port == 443 {
+		cred := credentials.NewTLS(&tls.Config{})
+		opts = append(opts, grpc.WithTransportCredentials(cred))
+	} else {
+		opts = append(opts, grpc.WithInsecure())
+	}
 	opts = append(opts, grpc.WithBlock())
-	conn, err := grpc.Dial(*serverAddr, opts...)
+	conn, err := grpc.Dial(fmt.Sprintf("%s:%d", *host, *port), opts...)
 	if err != nil {
 		log.Fatalf("fail to dial: %v", err)
 	}
