@@ -7,3 +7,5 @@ protoc \
     --js_out=import_style=commonjs:../clients/web/src/api-client/ \
     --grpc-web_out=import_style=typescript,mode=grpcwebtext:../clients/web/src/api-client/ \
     ephemeral_notes.proto
+
+cp ephemeral_notes.proto ../clients/android/app/src/main/proto/
